@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Configurar o .NET para a versão usada no seu projeto
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0'  # ou a versão apropriada do seu projeto
+
+      # Compilar o projeto
+      - name: Build with .NET
+        run: dotnet build --configuration Release
+
+      # Rodar testes (se houver testes automatizados no projeto)
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal
+
+      # Implantar em ambiente de staging
+      - name: Deploy to Staging
+        run: echo "Deploying to staging"
+
+  production:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Production
+        run: echo "Deploying to production"
